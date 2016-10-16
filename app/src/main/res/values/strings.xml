@@ -1,0 +1,8 @@
+<resources>
+    <!-- Name for the application [CHAR LIMIT=12] -->
+    <string name="app_name">InventoryApp</string>
+    <string name="empty_view_title_text">Everything Sold Out :(</string>
+    <string name="empty_view_subtitle_text">Get started by adding a product</string>
+
+
+</resources>
