@@ -25,7 +25,7 @@ import uno.weichen.abnd10_inventoryapp.data.ProductContract.ProductEntry;
 
 
 /**
- * Displays list of pets that were entered and stored in the app.
+ * Displays list of products that were entered and stored in the app.
  */
 public class CatalogActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final int PRODUCT_LOADER = 0;
@@ -46,12 +46,12 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
             }
         });
 
-        // Find the ListView which will be populated with the pet data
-        ListView petListView = (ListView) findViewById(R.id.list_view_pet);
+        // Find the ListView which will be populated with the product data
+        ListView productListView = (ListView) findViewById(R.id.list_view_product);
 
         // Find and set empty view on the ListView, so that it only shows when the list has 0 items.
         View emptyView = findViewById(R.id.empty_view);
-        petListView.setEmptyView(emptyView);
+        productListView.setEmptyView(emptyView);
 
         /**
          * Initializes the CursorLoader. The URL_LOADER value is eventually passed
@@ -60,10 +60,10 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         getSupportLoaderManager().initLoader(PRODUCT_LOADER, null, this);
         mProductAdapter = new ProductCursorAdapter(this, null);
         // Attach cursor adapter to the ListView
-        petListView.setAdapter(mProductAdapter);
+        productListView.setAdapter(mProductAdapter);
 
         // Setup item click listener
-        petListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        productListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(CatalogActivity.this, DetailActivity.class);
@@ -91,7 +91,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
                 return true;
             // Respond to a click on the "Delete all entries" menu option
             case R.id.action_delete_all_entries:
-                deleteAllPet();
+                deleteAllProduct();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -99,12 +99,12 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
 
     private void insertProduct() {
         //Define needed parameters;
-        String title = "iphone";
-        int price = 500;
+        String title = "Google Pixel";
+        int price = 649;
         String photo = "";
         int sold = 20;
         int restock = 30;
-        String contact = "abc@gmail.com";
+        String contact = "info@weichen.uno";
 
         // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
@@ -151,11 +151,11 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
     }
 
     /**
-     * Perform the deletion of the pet in the database.
+     * Perform the deletion of the product in the database.
      */
-    private void deleteAllPet() {
+    private void deleteAllProduct() {
         int rowsDeleted = getContentResolver().delete(ProductEntry.CONTENT_URI, null, null);
-        Log.v("CatalogActivity", rowsDeleted + " rows deleted from pet database");
+        Log.v("CatalogActivity", rowsDeleted + " rows deleted from product database");
     }
 
 

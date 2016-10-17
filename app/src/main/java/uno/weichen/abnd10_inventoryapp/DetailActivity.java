@@ -38,6 +38,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -46,7 +47,6 @@ import android.widget.Toast;
 import java.io.FileDescriptor;
 import java.io.IOException;
 
-import uno.weichen.abnd10_inventoryapp.data.ProductContract;
 import uno.weichen.abnd10_inventoryapp.data.ProductContract.ProductEntry;
 
 import static uno.weichen.abnd10_inventoryapp.data.ProductProvider.LOG_TAG;
@@ -87,6 +87,25 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
      */
     private EditText mContactEditText;
 
+    /**
+     * Button for Sale
+     */
+    private Button mSaleButton;
+
+    /**
+     * Button for Restock
+     */
+    private Button mRestockButton;
+
+    /**
+     * Button for Order
+     */
+
+    private Button mOrderButton;
+    /**
+     * Button for Delete
+     */
+    private Button mDeleteButton;
 
     /**
      * CONSTANT for PRODUCTION_ITEM_LOADER
@@ -103,6 +122,10 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
      */
     private boolean mProductHasChanged = false;
 
+    /**
+     * OnTouchListener that listens for any user touches on a View, implying that they are modifying
+     * the view, and we change the mProductHasChanged boolean to true.
+     */
     private View.OnTouchListener mTouchListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -122,14 +145,10 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     private Uri mPhotoUri;
 
     /**
-     * ImageView field to enter the pet's photo
+     * ImageView field to enter the product's photo
      */
     private ImageView mImageView;
 
-    /**
-     * TextView field to display the photo uri
-     */
-    private TextView mTextView;
 
 
     @Override
@@ -137,12 +156,27 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
+        // Find all relevant views that we will need to read user input from
+        mNameEditText = (EditText) findViewById(R.id.edit_product_name);
+        mPriceEditText = (EditText) findViewById(R.id.edit_product_price);
+        mQuantityTextView = (TextView) findViewById(R.id.textview_product_quantity);
+        mContactEditText = (EditText) findViewById(R.id.edit_product_contact);
+        mSoldQuantityTextView = (TextView) findViewById(R.id.textview_product_sold_quantity);
+        mRestockQuantityTextView = (TextView) findViewById(R.id.textview_product_restock_quantity);
+        mSaleButton = (Button) findViewById(R.id.button_sale_product);
+        mRestockButton = (Button) findViewById(R.id.button_restock_product);
+        mDeleteButton = (Button)findViewById(R.id.button_delete_product);
+        mOrderButton = (Button) findViewById(R.id.button_order);
+
+        mImageView = (ImageView) findViewById(R.id.image);
+
         // Use getIntent and getData to get the associated URI
         mCurrentProductUri = getIntent().getData();
         //Set title of DetailActivity on which situation we have
         if (mCurrentProductUri == null) {
             setTitle(getString(R.string.editor_activity_title_new_product));
             invalidateOptionsMenu();
+            mDeleteButton.setVisibility(View.GONE);
         } else {
             setTitle(getString(R.string.editor_activity_title_edit_product));
             /**
@@ -151,29 +185,90 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
              */
             getSupportLoaderManager().initLoader(PRODUCTION_ITEM_LOADER, null, this);
         }
-        // Find all relevant views that we will need to read user input from
-        mNameEditText = (EditText) findViewById(R.id.edit_product_name);
-        mPriceEditText = (EditText) findViewById(R.id.edit_product_price);
-        mQuantityTextView = (TextView) findViewById(R.id.textview_product_quantity);
-        mContactEditText = (EditText) findViewById(R.id.edit_product_contact);
-        mSoldQuantityTextView = (TextView) findViewById(R.id.textview_product_sold_quantity);
-        mRestockQuantityTextView = (TextView) findViewById(R.id.textview_product_restock_quantity);
 
-        mImageView = (ImageView) findViewById(R.id.image);
-        mTextView = (TextView) findViewById(R.id.image_uri);
 
         // Setup onTouchListener for editors components.
         mNameEditText.setOnTouchListener(mTouchListener);
         mPriceEditText.setOnTouchListener(mTouchListener);
         mContactEditText.setOnTouchListener(mTouchListener);
+
+        //Onclick Listener for Sale
+        mSaleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String soldQuantityString = mSoldQuantityTextView.getText().toString().trim();
+                String quantityString = mQuantityTextView.getText().toString().trim();
+                int soldQuantityInt = Integer.parseInt(soldQuantityString);
+                int quantityInt = Integer.parseInt(quantityString);
+                if(quantityInt > 0) {
+                    //if button clicked and quantity > 0
+                    soldQuantityInt++;
+                    quantityInt--;
+                    soldQuantityString = Integer.toString(soldQuantityInt);
+                    quantityString = Integer.toString(quantityInt);
+                    mQuantityTextView.setText(quantityString);
+                    mSoldQuantityTextView.setText(soldQuantityString);
+                    //inform the user the product detail has been changed.
+                    mProductHasChanged = true;
+                }
+            }
+        });
+
+        //Onclick Listener for Restock
+        mRestockButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String restockQuantityString = mRestockQuantityTextView.getText().toString().trim();
+                String quantityString = mQuantityTextView.getText().toString().trim();
+                int restockQuantityInt = Integer.parseInt(restockQuantityString);
+                int quantityInt = Integer.parseInt(quantityString);
+                //if button clicked
+                restockQuantityInt++;
+                quantityInt++;
+                restockQuantityString = Integer.toString(restockQuantityInt);
+                quantityString = Integer.toString(quantityInt);
+                mQuantityTextView.setText(quantityString);
+                mRestockQuantityTextView.setText(restockQuantityString);
+                //inform the user the product detail has been changed.
+                mProductHasChanged = true;
+            }
+        });
+
+        //Onclick Listener for Delete
+        mDeleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDeleteConfirmationDialog();
+            }
+        });
+
+        //Onclick Listener for Order
+        mOrderButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String subject = "Restocking Request";
+                String body = "Dear Supplier, \n"
+                    + "We need more " + mNameEditText.getText().toString().trim()+".\n"
+                    + "Please contact us! \n";
+
+                Intent intent = new Intent(Intent.ACTION_SENDTO);
+                intent.setData(Uri.parse("mailto:")); // only email apps should handle this
+                intent.putExtra(Intent.EXTRA_EMAIL, new String[] { mContactEditText.getText().toString().trim() });
+                intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+                intent.putExtra(Intent.EXTRA_TEXT,body);
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
+                }   }
+        });
+
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu options from the res/menu/menu_editor.xml file.
+        // Inflate the menu options from the res/menu/menu_detail.xml file.
         // This adds menu items to the app bar.
-        getMenuInflater().inflate(R.menu.menu_editor, menu);
+        getMenuInflater().inflate(R.menu.menu_detail, menu);
         return true;
     }
 
@@ -183,9 +278,9 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         switch (item.getItemId()) {
             // Respond to a click on the "Save" menu option
             case R.id.action_save:
-                //Save pet to the database
-                savePet();
-                finish();
+                //Save product to the database
+                saveProduct();
+
                 return true;
             // Respond to a click on the "Delete" menu option
             case R.id.action_delete:
@@ -195,7 +290,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                 return true;
             // Respond to a click on the "Up" arrow button in the app bar
             case android.R.id.home:
-                // If the pet hasn't changed, continue with navigating up to parent activity
+                // If the product hasn't changed, continue with navigating up to parent activity
                 // which is the {@link CatalogActivity}.
                 if (!mProductHasChanged) {
                     NavUtils.navigateUpFromSameTask(DetailActivity.this);
@@ -221,7 +316,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         return super.onOptionsItemSelected(item);
     }
 
-    private void savePet() {
+    private void saveProduct() {
         String nameString = mNameEditText.getText().toString().trim();
         String priceString = mPriceEditText.getText().toString().trim();
         String soldQuantityString = mSoldQuantityTextView.getText().toString().trim();
@@ -240,6 +335,20 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             return;
         }
 
+        //Check name, contact, price cannot be empty;
+        if (TextUtils.isEmpty(nameString) || TextUtils.isEmpty(priceString) || TextUtils.isEmpty(contactString)){
+            Toast.makeText(this, getString(R.string.editor_required_field_empty),
+                Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        //Check email address pattern
+        if(!isEmailValid(contactString)){
+            Toast.makeText(this, getString(R.string.editor_required_valid_email),
+                Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         int priceInt = Integer.parseInt(priceString);
         int soldQuantityInt = Integer.parseInt(soldQuantityString);
         int restockQuantityInt = Integer.parseInt(restockQuantityString);
@@ -253,13 +362,13 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         values.put(ProductEntry.COLUMN_PRODUCT_RESTOCK_QUANTITY, restockQuantityInt);
         values.put(ProductEntry.COLUMN_PRODUCT_CONTACT, contactString);
 
-        Uri mPetUri;
+        Uri mProductUri;
         //if new product mode
         if (mCurrentProductUri == null) {
 
-            mPetUri = getContentResolver().insert(ProductEntry.CONTENT_URI, values);
+            mProductUri = getContentResolver().insert(ProductEntry.CONTENT_URI, values);
             // Show a toast message depending on whether or not the insertion was successful
-            if (mPetUri != null) {
+            if (mProductUri != null) {
                 // If the new content URI is null, then there was an error with insertion.
                 Toast.makeText(this, getString(R.string.editor_insert_product_successful),
                     Toast.LENGTH_SHORT).show();
@@ -269,8 +378,6 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                     Toast.LENGTH_SHORT).show();
             }
         } else {
-            //String selection = PetContract.PetEntry._ID + " = ?";
-            //String[] selectionArgs = {Long.toString(ContentUris.parseId(mCurrentProductUri))};
             int rowAffected = getContentResolver().update(mCurrentProductUri, values, null, null);
             if (rowAffected == 0) {
                 Toast.makeText(this, getString(R.string.editor_update_product_failed),
@@ -282,6 +389,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             }
         }
 
+        finish();
     }
 
     @Override
@@ -310,17 +418,22 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             String contactString = cursor.getString(cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_CONTACT));
             String photoUriString = "Don't have URI text";
 
+            // Calculate current quantity
+            int productQuantityInt = Integer.parseInt(restockQuantityString) - Integer.parseInt(soldQuantityString);
+            String productQuantityString = Integer.toString(productQuantityInt);
+
             mNameEditText.setText(nameString);
             mPriceEditText.setText(priceString);
+            mQuantityTextView.setText(productQuantityString);
             mSoldQuantityTextView.setText(soldQuantityString);
             mRestockQuantityTextView.setText(restockQuantityString);
             mContactEditText.setText(contactString);
-            mTextView.setText(photoUriString);
             photoUriString = cursor.getString(cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_PHOTO));
             if (!TextUtils.isEmpty(photoUriString)) {
-                mTextView.setText(photoUriString);
                 mImageView.setImageURI(Uri.parse(photoUriString));
             }
+
+
         }
     }
 
@@ -332,7 +445,6 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         mRestockQuantityTextView.setText("0");
         mSoldQuantityTextView.setText("0");
         mContactEditText.setText("");
-        mTextView.setText("");
         mImageView.setImageResource(0);
     }
 
@@ -347,7 +459,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         builder.setNegativeButton(R.string.keep_editing, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked the "Keep editing" button, so dismiss the dialog
-                // and continue editing the pet.
+                // and continue editing the product.
                 if (dialog != null) {
                     dialog.dismiss();
                 }
@@ -361,7 +473,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
     @Override
     public void onBackPressed() {
-        // If the pet hasn't changed, continue with handling back button press
+        // If the product hasn't changed, continue with handling back button press
         if (!mProductHasChanged) {
             super.onBackPressed();
             return;
@@ -385,7 +497,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        // If this is a new pet, hide the "Delete" menu item.
+        // If this is a new product, hide the "Delete" menu item.
         if (mCurrentProductUri == null) {
             MenuItem menuItem = menu.findItem(R.id.action_delete);
             menuItem.setVisible(false);
@@ -400,14 +512,14 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         builder.setMessage(R.string.delete_dialog_msg);
         builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                // User clicked the "Delete" button, so delete the pet.
-                deletePet();
+                // User clicked the "Delete" button, so delete the product.
+                deleteProduct();
             }
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked the "Cancel" button, so dismiss the dialog
-                // and continue editing the pet.
+                // and continue editing the product.
                 if (dialog != null) {
                     dialog.dismiss();
                 }
@@ -420,9 +532,9 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     }
 
     /**
-     * Perform the deletion of the pet in the database.
+     * Perform the deletion of the product in the database.
      */
-    private void deletePet() {
+    private void deleteProduct() {
         int mRowsDeleted = 0;
         if (mCurrentProductUri != null) {
 
@@ -496,9 +608,15 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             if (resultData != null) {
                 mPhotoUri = resultData.getData();
                 Log.i(LOG_TAG, "Uri: " + mPhotoUri.toString());
-                mTextView.setText(mPhotoUri.toString());
                 mImageView.setImageBitmap(getBitmapFromUri(mPhotoUri));
             }
         }
+    }
+
+    /**
+     * Validate Email address
+     */
+    public static boolean isEmailValid(String email) {
+        return !(email == null || TextUtils.isEmpty(email)) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 }

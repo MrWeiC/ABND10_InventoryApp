@@ -15,7 +15,7 @@ import static uno.weichen.abnd10_inventoryapp.data.ProductContract.ProductEntry;
 
 
 /**
- * {@link ContentProvider} for Pets app.
+ * {@link ContentProvider} for Products app.
  */
 public class ProductProvider extends ContentProvider {
     /**
@@ -204,7 +204,7 @@ public class ProductProvider extends ContentProvider {
             }
         }
 
-        // If the {@link ProductEntry#COLUMN_PET_GENDER} key is present,
+        // If the {@link ProductEntry#COLUMN_PRODUCT_PRICE} key is present,
         // check that the price value is valid.
         if (values.containsKey(ProductEntry.COLUMN_PRODUCT_PRICE)) {
             Integer price = values.getAsInteger(ProductEntry.COLUMN_PRODUCT_PRICE);
