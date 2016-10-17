@@ -148,11 +148,6 @@ public class ProductProvider extends ContentProvider {
             throw new IllegalArgumentException("Product requires valid price");
         }
 
-        // Check the quantity is valid
-        Integer quantity = values.getAsInteger(ProductEntry.COLUMN_PRODUCT_QUANTITY);
-        if (quantity != null && quantity < 0) {
-            throw new IllegalArgumentException("Product requires valid quantity");
-        }
 
         // Get writeable database
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
@@ -214,19 +209,10 @@ public class ProductProvider extends ContentProvider {
         if (values.containsKey(ProductEntry.COLUMN_PRODUCT_PRICE)) {
             Integer price = values.getAsInteger(ProductEntry.COLUMN_PRODUCT_PRICE);
             if (price == null || price <= 0) {
-                throw new IllegalArgumentException("Pet requires valid gender");
+                throw new IllegalArgumentException("Product requires valid price");
             }
         }
 
-        // If the {@link ProductEntry#COLUMN_PET_WEIGHT} key is present,
-        // check that the quantity value is valid.
-        if (values.containsKey(ProductEntry.COLUMN_PRODUCT_QUANTITY)) {
-            // Check that the quantity is greater than or equal to 0
-            Integer quantity = values.getAsInteger(ProductEntry.COLUMN_PRODUCT_QUANTITY);
-            if (quantity != null && quantity < 0) {
-                throw new IllegalArgumentException("Pet requires valid weight");
-            }
-        }
 
         // If there are no values to update, then don't try to update the database
         if (values.size() == 0) {
