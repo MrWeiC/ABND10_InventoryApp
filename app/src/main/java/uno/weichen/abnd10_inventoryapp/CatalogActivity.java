@@ -1,9 +1,7 @@
 package uno.weichen.abnd10_inventoryapp;
 
-import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
@@ -17,11 +15,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import static android.content.ContentUris.parseId;
-import static android.content.ContentUris.withAppendedId;
-
-
 import uno.weichen.abnd10_inventoryapp.data.ProductContract.ProductEntry;
+
+import static android.content.ContentUris.withAppendedId;
 
 
 /**
@@ -67,7 +63,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(CatalogActivity.this, DetailActivity.class);
-                intent.setData(withAppendedId(ProductEntry.CONTENT_URI,id));
+                intent.setData(withAppendedId(ProductEntry.CONTENT_URI, id));
                 startActivity(intent);
             }
         });
@@ -85,38 +81,11 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
     public boolean onOptionsItemSelected(MenuItem item) {
         // User clicked on a menu option in the app bar overflow menu
         switch (item.getItemId()) {
-            // Respond to a click on the "Insert dummy data" menu option
-            case R.id.action_insert_dummy_data:
-                insertProduct();
-                return true;
-            // Respond to a click on the "Delete all entries" menu option
             case R.id.action_delete_all_entries:
                 deleteAllProduct();
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void insertProduct() {
-        //Define needed parameters;
-        String title = "Google Pixel";
-        int price = 649;
-        String photo = "";
-        int sold = 20;
-        int restock = 30;
-        String contact = "info@weichen.uno";
-
-        // Create a new map of values, where column names are the keys
-        ContentValues values = new ContentValues();
-        values.put(ProductEntry.COLUMN_PRODUCT_NAME, title);
-        values.put(ProductEntry.COLUMN_PRODUCT_PRICE, price);
-        values.put(ProductEntry.COLUMN_PRODUCT_PHOTO, photo);
-        values.put(ProductEntry.COLUMN_PRODUCT_RESTOCK_QUANTITY, restock);
-        values.put(ProductEntry.COLUMN_PRODUCT_SOLD_QUANTITY, sold);
-        values.put(ProductEntry.COLUMN_PRODUCT_CONTACT, contact);
-
-        Uri mProductUri = getContentResolver().insert(ProductEntry.CONTENT_URI, values);
-        Log.v("catalogActivity", "New row ID" + parseId(mProductUri));
     }
 
     @Override
@@ -157,6 +126,5 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         int rowsDeleted = getContentResolver().delete(ProductEntry.CONTENT_URI, null, null);
         Log.v("CatalogActivity", rowsDeleted + " rows deleted from product database");
     }
-
 
 }

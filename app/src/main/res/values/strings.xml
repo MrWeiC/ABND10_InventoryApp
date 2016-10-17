@@ -1,6 +1,6 @@
 <resources>
     <!-- Name for the application [CHAR LIMIT=12] -->
-    <string name="app_name">InventoryApp</string>
+    <string name="app_name">Inventory App</string>
 
     <!-- Label for overflow menu option that inserts fake product data into the app [CHAR LIMIT=20] -->
     <string name="action_insert_dummy_data">Insert Dummy Data</string>
@@ -42,7 +42,9 @@
     <string name="editor_update_product_failed">Error with updating product</string>
 
     <!-- Error message when Name/Price/ContactEmail has empty field. [CHAR LIMIT=20] -->
-    <string name="editor_required_field_empty">Product Name, Price and Contact Email cannot be empty!</string>
+    <string name="editor_required_field_empty">Product Name, Price and Contact Email cannot be
+        empty!
+    </string>
 
     <!-- Error message when Contact is not valid email pattern [CHAR LIMIT=20] -->
     <string name="editor_required_valid_email">Please enter an valid email address!</string>
@@ -66,4 +68,6 @@
 
     <!-- Toast message in editor when current product has failed to be deleted [CHAR LIMIT=NONE] -->
     <string name="editor_delete_product_failed">Error with deleting product</string>
+    <string name="get_bitmap_from_uri_error">Error closing ParcelFile Descriptor</string>
+    <string name="get_bitmap_from_uri_exception">Failed to load image.</string>
 </resources>

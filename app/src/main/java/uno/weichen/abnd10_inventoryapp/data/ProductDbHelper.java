@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import static uno.weichen.abnd10_inventoryapp.data.ProductContract.ProductEntry;
 
 /**
- * Created by weichen on 10/1/16.
+ * Created by weichen on 10/16/16.
  */
 
 public class ProductDbHelper extends SQLiteOpenHelper {
@@ -19,7 +19,6 @@ public class ProductDbHelper extends SQLiteOpenHelper {
     public ProductDbHelper(Context context) {
         super(context, DATABSE_NAME, null, DATABASE_VERSION);
     }
-
 
 
     @Override

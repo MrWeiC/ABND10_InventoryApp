@@ -132,8 +132,8 @@ public class ProductProvider extends ContentProvider {
     }
 
     /**
-     * Insert a product into the database with the given content values. Return the new content URI for
-     * that specific row in the database.
+     * Insert a product into the database with the given content values. Return the new content URI
+     * for that specific row in the database.
      */
     private Uri insertProduct(Uri uri, ContentValues values) {
         // Check that the name is not null
@@ -147,7 +147,6 @@ public class ProductProvider extends ContentProvider {
         if (price == null || price <= 0) {
             throw new IllegalArgumentException("Product requires valid price");
         }
-
 
         // Get writeable database
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
@@ -212,7 +211,6 @@ public class ProductProvider extends ContentProvider {
                 throw new IllegalArgumentException("Product requires valid price");
             }
         }
-
 
         // If there are no values to update, then don't try to update the database
         if (values.size() == 0) {

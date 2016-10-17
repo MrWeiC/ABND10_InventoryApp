@@ -17,17 +17,17 @@
         </activity>
         <activity
             android:name=".DetailActivity"
-            android:theme="@style/EditorTheme"
-            android:parentActivityName=".CatalogActivity" >
+            android:parentActivityName=".CatalogActivity"
+            android:theme="@style/EditorTheme">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".CatalogActivity" />
+                android:value=".CatalogActivity"/>
         </activity>
         <provider
             android:name=".data.ProductProvider"
             android:authorities="uno.weichen.abnd10_inventoryapp"
-            android:exported="false" />
+            android:exported="false"/>
     </application>
 
 </manifest>

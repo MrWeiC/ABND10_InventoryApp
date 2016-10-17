@@ -147,8 +147,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     /**
      * ImageView field to enter the product's photo
      */
-    private ImageView mImageView;
-
+    private ImageView mProductPhotoImageView;
 
 
     @Override
@@ -165,10 +164,10 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         mRestockQuantityTextView = (TextView) findViewById(R.id.textview_product_restock_quantity);
         mSaleButton = (Button) findViewById(R.id.button_sale_product);
         mRestockButton = (Button) findViewById(R.id.button_restock_product);
-        mDeleteButton = (Button)findViewById(R.id.button_delete_product);
+        mDeleteButton = (Button) findViewById(R.id.button_delete_product);
         mOrderButton = (Button) findViewById(R.id.button_order);
 
-        mImageView = (ImageView) findViewById(R.id.image);
+        mProductPhotoImageView = (ImageView) findViewById(R.id.image);
 
         // Use getIntent and getData to get the associated URI
         mCurrentProductUri = getIntent().getData();
@@ -186,7 +185,6 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             getSupportLoaderManager().initLoader(PRODUCTION_ITEM_LOADER, null, this);
         }
 
-
         // Setup onTouchListener for editors components.
         mNameEditText.setOnTouchListener(mTouchListener);
         mPriceEditText.setOnTouchListener(mTouchListener);
@@ -200,7 +198,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                 String quantityString = mQuantityTextView.getText().toString().trim();
                 int soldQuantityInt = Integer.parseInt(soldQuantityString);
                 int quantityInt = Integer.parseInt(quantityString);
-                if(quantityInt > 0) {
+                if (quantityInt > 0) {
                     //if button clicked and quantity > 0
                     soldQuantityInt++;
                     quantityInt--;
@@ -248,17 +246,18 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             public void onClick(View v) {
                 String subject = "Restocking Request";
                 String body = "Dear Supplier, \n"
-                    + "We need more " + mNameEditText.getText().toString().trim()+".\n"
+                    + "We need more " + mNameEditText.getText().toString().trim() + ".\n"
                     + "Please contact us! \n";
 
                 Intent intent = new Intent(Intent.ACTION_SENDTO);
                 intent.setData(Uri.parse("mailto:")); // only email apps should handle this
-                intent.putExtra(Intent.EXTRA_EMAIL, new String[] { mContactEditText.getText().toString().trim() });
+                intent.putExtra(Intent.EXTRA_EMAIL, new String[]{mContactEditText.getText().toString().trim()});
                 intent.putExtra(Intent.EXTRA_SUBJECT, subject);
-                intent.putExtra(Intent.EXTRA_TEXT,body);
+                intent.putExtra(Intent.EXTRA_TEXT, body);
                 if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivity(intent);
-                }   }
+                }
+            }
         });
 
     }
@@ -336,14 +335,14 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         }
 
         //Check name, contact, price cannot be empty;
-        if (TextUtils.isEmpty(nameString) || TextUtils.isEmpty(priceString) || TextUtils.isEmpty(contactString)){
+        if (TextUtils.isEmpty(nameString) || TextUtils.isEmpty(priceString) || TextUtils.isEmpty(contactString)) {
             Toast.makeText(this, getString(R.string.editor_required_field_empty),
                 Toast.LENGTH_SHORT).show();
             return;
         }
 
         //Check email address pattern
-        if(!isEmailValid(contactString)){
+        if (!isEmailValid(contactString)) {
             Toast.makeText(this, getString(R.string.editor_required_valid_email),
                 Toast.LENGTH_SHORT).show();
             return;
@@ -416,7 +415,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             String soldQuantityString = cursor.getString(cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_SOLD_QUANTITY));
             String restockQuantityString = cursor.getString(cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_RESTOCK_QUANTITY));
             String contactString = cursor.getString(cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_CONTACT));
-            String photoUriString = "Don't have URI text";
+            String photoUriString;
 
             // Calculate current quantity
             int productQuantityInt = Integer.parseInt(restockQuantityString) - Integer.parseInt(soldQuantityString);
@@ -430,10 +429,8 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             mContactEditText.setText(contactString);
             photoUriString = cursor.getString(cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_PHOTO));
             if (!TextUtils.isEmpty(photoUriString)) {
-                mImageView.setImageURI(Uri.parse(photoUriString));
+                mProductPhotoImageView.setImageURI(Uri.parse(photoUriString));
             }
-
-
         }
     }
 
@@ -445,7 +442,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         mRestockQuantityTextView.setText("0");
         mSoldQuantityTextView.setText("0");
         mContactEditText.setText("");
-        mImageView.setImageResource(0);
+        mProductPhotoImageView.setImageResource(0);
     }
 
 
@@ -566,7 +563,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             parcelFileDescriptor.close();
             return image;
         } catch (Exception e) {
-            Log.e(LOG_TAG, "Failed to load image.", e);
+            Log.e(LOG_TAG, getString(R.string.get_bitmap_from_uri_exception), e);
             return null;
         } finally {
             try {
@@ -575,7 +572,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-                Log.e(LOG_TAG, "Error closing ParcelFile Descriptor");
+                Log.e(LOG_TAG, getString(R.string.get_bitmap_from_uri_error));
             }
         }
     }
@@ -608,7 +605,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             if (resultData != null) {
                 mPhotoUri = resultData.getData();
                 Log.i(LOG_TAG, "Uri: " + mPhotoUri.toString());
-                mImageView.setImageBitmap(getBitmapFromUri(mPhotoUri));
+                mProductPhotoImageView.setImageBitmap(getBitmapFromUri(mPhotoUri));
             }
         }
     }
